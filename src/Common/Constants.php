@@ -24,4 +24,8 @@ class Constants
     const EXECUTION_MODE_SCAN = 'scan';
     const EXECUTION_MODE_LOCK = 'lock';
     const EXECUTION_MODE_GUARD = 'guard';
+    const EXECUTION_MODE_RESET = 'reset';
+
+    const GUARD_MODE_DELETE = 'delete';
+    const GUARD_MODE_NOTIFY = 'notify';
 }

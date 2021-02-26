@@ -4,7 +4,9 @@
     "require": {
         "camilord/utilus": "^1.0",
         "phpmailer/phpmailer": "^6.2",
-        "symfony/console": "5.2.*"
+        "symfony/console": "5.2.*",
+        "ext-json": "*",
+        "ext-pdo": "*"
     },
     "config": {
         "optimize-autoloader": true,
