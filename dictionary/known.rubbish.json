@@ -1,0 +1,26 @@
+[
+  {
+    "filetype": "php",
+    "pattern": "@ini_set('error_log', NULL);@ini_set('log_errors', 0);@ini_set('max_execution_time', 0);@error_reporting(0);@set_time_limit(0);"
+  },
+  {
+    "filetype": "php",
+    "pattern": "7x1n8a5vy96Hb2uogmk4i*#sdfpc3r-"
+  },
+  {
+    "filetype": "php",
+    "pattern": "93lb8ns*y7u_5dHe4a"
+  },
+  {
+    "filetype": "php",
+    "pattern": "rbyuaqk"
+  },
+  {
+    "filetype": "php",
+    "pattern": "@include \"\\057home\\063/"
+  },
+  {
+    "filetype": "php",
+    "pattern": "_whro59oo"
+  }
+]

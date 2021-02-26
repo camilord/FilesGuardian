@@ -7,21 +7,21 @@
  *                              - github.com/camilord
  *                              - linkedin.com/in/camilord
  *
- * FilesGuardian - DBConfig.php
+ * FilesGuardian - Constants.php
  * Username: Camilo
  * Date: 26/02/2021
- * Time: 9:52 PM
+ * Time: 11:00 PM
  */
 
-namespace App\Config;
-
-use camilord\utilus\IO\SystemUtilus;
+namespace App\Common;
 
 /**
- * Class DBConfig
- * @package App\Config
+ * Class Constants
+ * @package App\Common
  */
-class DBConfig
+class Constants
 {
-    const SQLiteDb = CONSOLE_ROOT.'/files_guardian.db';
+    const EXECUTION_MODE_SCAN = 'scan';
+    const EXECUTION_MODE_LOCK = 'lock';
+    const EXECUTION_MODE_GUARD = 'guard';
 }

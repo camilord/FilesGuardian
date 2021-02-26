@@ -17,6 +17,7 @@ namespace App\Config;
 
 
 use camilord\utilus\Data\ArrayUtilus;
+use camilord\utilus\IO\SystemUtilus;
 
 /**
  * Class MailConfig
@@ -51,7 +52,7 @@ class MailConfig
      */
     public function __construct()
     {
-        $config_file = CONSOLE_ROOT.'/mail.conf.json';
+        $config_file = SystemUtilus::cleanPath(CONSOLE_ROOT.'/mail.conf.json');
         if (file_exists($config_file)) {
             $data = json_decode(file_get_contents($config_file), true);
             if (ArrayUtilus::haveData($data))
