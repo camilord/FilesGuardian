@@ -132,9 +132,9 @@ class ScanFilesCommand extends BaseCommand
                     echo "\nMalicious files have been detected!\n";
                     echo "Malicious Directories: {$this->collected_rubbish_dir}\n";
                     echo "Malicious Files: {$this->collected_rubbish_files}\n";
-                    echo "\n";
+                    echo "\n\n";
                 } else {
-                    echo "Yey! No malicious files have been detected.";
+                    echo "Yey! No malicious files have been detected.\n\n\n";
                 }
             }
 
@@ -390,14 +390,16 @@ class ScanFilesCommand extends BaseCommand
         $mailer = new Mailer();
 
         $recipients = json_decode(file_get_contents(CONSOLE_ROOT.'/admin.conf.json'), true);
-        $subject = 'ALERT! '.gethostname().' have detected malicious files! #'.date('Ymd');
+        $subject = 'ALERT! '.gethostname().' have detected malicious files! #'.date('Ymd-His');
         $message = '<p>ATTENTION!</p>
                     <br />
                     <p>Malicious files and folders detected!</p>
-                    <p><strong>Files:</strong><br /><pre>'.print_r($this->collected_rubbish_files).'</pre></p>
-                    <p><strong>Folders:</strong><br /><pre>'.print_r($this->collected_rubbish_dir).'</pre></pre>
+                    <p><strong>Files:</strong><br /><pre>'.print_r($this->collected_rubbish_files, true).'</pre></p>
+                    <p><strong>Folders:</strong><br /><pre>'.print_r($this->collected_rubbish_dir, true).'</pre></pre>
                     <br />
                     <p>-- FilesGuardian on '.gethostname().'</p>';
         return $mailer->send($recipients, $subject, $message);
     }
+
+    // -- end of file
 }
