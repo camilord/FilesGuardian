@@ -23,6 +23,7 @@ use App\Core\LockVault;
 use App\Mail\Mailer;
 use App\Misc\RubbishDefaultDictionary;
 use camilord\utilus\Data\ArrayUtilus;
+use camilord\utilus\IO\FileUtilus;
 use camilord\utilus\IO\SystemUtilus;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -170,7 +171,11 @@ class ScanFilesCommand extends BaseCommand
 
             $filename = $dir.'/'.$item;
 
-            echo "Scanning rubbish: {$filename} ";
+            if ($this->mode === Constants::EXECUTION_MODE_SCAN) {
+                echo "Scanning rubbish: {$filename} ";
+            } else {
+                echo "Processing object: {$filename} ";
+            }
 
             if (is_dir($filename) && !in_array($filename, $this->exclusion_dir)) {
                 echo ":\n\n";
@@ -187,7 +192,7 @@ class ScanFilesCommand extends BaseCommand
             } else if (
                 is_file($filename) &&
                 !in_array($filename, $this->exclusion_files) &&
-                in_array(substr($filename, -3), ExtConfig::get_list())
+                in_array(FileUtilus::get_extension($filename), ExtConfig::get_list())
             ) {
                 if ($this->mode === Constants::EXECUTION_MODE_SCAN) {
                     if ($this->is_rubbish($filename)) {
@@ -230,6 +235,7 @@ class ScanFilesCommand extends BaseCommand
                             $this->collected_rubbish_files[] = $item;
                             echo "\t -> TBD (To Be Deleted)";
                         }
+                        return false;
                     } else {
                         echo "\t -> OK\n";
                     }
@@ -249,7 +255,7 @@ class ScanFilesCommand extends BaseCommand
                 }
             }
         } else if (is_dir($item)) {
-            echo "Locking folder: {$item} ";
+            //echo "Locking folder: {$item} ";
             if (!$this->lock_vault->dir_exists($item)) {
                 if ($this->mode === Constants::EXECUTION_MODE_GUARD) {
                     if ($this->action === Constants::GUARD_MODE_DELETE) {
