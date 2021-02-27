@@ -76,7 +76,7 @@ class ScanFilesCommand extends BaseCommand
 
         $this
             ->addOption('mode', null, InputOption::VALUE_REQUIRED, 'Execution mode whether to lock, scan or guard the files. Mode values: lock|scan|guard|reset')
-            ->addOption('action', null, InputOption::VALUE_OPTIONAL, 'When guard mode, what do you want with the malicious files/folders? Delete and Notify (delete) or Notify only (notify)? By default: delete , Values: delete|notify')
+            ->addOption('action', null, InputOption::VALUE_OPTIONAL, 'When guard mode, what do you want with the malicious files/folders? Delete and Notify (delete) or Notify only (notify)? By default: notify , Values: delete|notify')
             // configure an argument
             ->addArgument('path', InputArgument::REQUIRED, 'Path or directory to execute with')
             // ...
@@ -98,7 +98,7 @@ class ScanFilesCommand extends BaseCommand
         // of the command. You can also use these constants to make code more readable
         $this->mode = $input->getOption('mode');
         $this->path = $input->getArgument('path');
-        $this->action = $input->getOption('action') ?? Constants::GUARD_MODE_DELETE;
+        $this->action = $input->getOption('action') ?? Constants::GUARD_MODE_NOTIFY;
 
         if ($this->mode === Constants::EXECUTION_MODE_RESET) {
             $this->lock_vault = new LockVault($this->getDB());
