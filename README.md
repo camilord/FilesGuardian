@@ -38,26 +38,29 @@ the command below is to scan the specified path
 php console.php --mode=scan /var/www/html
 ```
 
-the command below is to lock down the specified path
+the command below is to lockdown the files and folders on the specified path, or freeze state.
 ```bash
 php console.php --mode=lock /var/www/html
 ```
 
 ### Enable guarding your files
 the command below is to guard the specified folder,
-if there are foreign files and folders, it will be deleted automatically
+so, if there are foreign files and folders will be added or created or 
+even the files are modified, it will be deleted automatically.
 
-there are two options, aggressive and passive
+there are two options, aggressive and passive...
 
-for aggressive mode, use:
+for aggressive mode, use and add this to cron:
 ```bash
-0 * * * * php /root/FilesGuardian/console.php --mode=guard --action=delete /var/www/html
+0 * * * * php /root/FilesGuardian/console.php --mode=guard --action=delete "/var/www/html"
 ```
+meaning, if any malicious files or folders found, will automatically delete it and notify you (make sure you configure the `mail.conf.json`).
 
-for passive mode, use:
+for passive mode, use ad add this to cron:
 ```bash
-0 * * * * php /root/FilesGuardian/console.php --mode=guard --action=notify /var/www/html
+0 * * * * php /root/FilesGuardian/console.php --mode=guard --action=notify "/var/www/html"
 ```
+meaning, if any malicious files/folders found, will notify you (reminder to configure the `mail.conf.json`)
 
 
 ### Warning

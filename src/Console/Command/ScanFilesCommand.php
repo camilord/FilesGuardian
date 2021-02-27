@@ -122,7 +122,7 @@ class ScanFilesCommand extends BaseCommand
                 $this->executionScanMode();
             } else if ($this->mode === Constants::EXECUTION_MODE_LOCK) {
                 echo "==========================================================================\n";
-                echo ">>> SCAN COMPLETED AND FILE SYSTEM LOCKED! <<<\n";
+                echo ">>> [".date('Y-m-d H:i:s')."] SCAN COMPLETED AND FILE SYSTEM LOCKED! <<<\n";
             } else if ($this->mode === Constants::EXECUTION_MODE_GUARD) {
                 echo "==========================================================================\n";
                 if (ArrayUtilus::haveData($this->collected_rubbish_dir) || ArrayUtilus::haveData($this->collected_rubbish_files)) {
@@ -134,12 +134,12 @@ class ScanFilesCommand extends BaseCommand
                     echo "Malicious Files: ".print_r($this->collected_rubbish_files, true)."\n";
                     echo "\n\n";
                 } else {
-                    echo "Yey! No malicious files have been detected.\n\n\n";
+                    echo "[".date('Y-m-d H:i:s')."] Yey! No malicious files have been detected.\n\n\n";
                 }
             }
 
         } else {
-            throw new \Exception("Error! Please provide a valid path to scan.");
+            throw new \Exception("[".date('Y-m-d H:i:s')."] Error! Please provide a valid path to scan.");
         }
 
         // return this if there was no problem running the command
