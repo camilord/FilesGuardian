@@ -119,8 +119,22 @@ class ScanFilesCommand extends BaseCommand
 
             if ($this->mode === Constants::EXECUTION_MODE_SCAN) {
                 $this->executionScanMode();
+            } else if ($this->mode === Constants::EXECUTION_MODE_LOCK) {
+                echo "==========================================================================\n";
+                echo ">>> SCAN COMPLETED AND FILE SYSTEM LOCKED! <<<\n";
             } else if ($this->mode === Constants::EXECUTION_MODE_GUARD) {
-                $this->sendGuardNotification();
+                echo "==========================================================================\n";
+                if (ArrayUtilus::haveData($this->collected_rubbish_dir) || ArrayUtilus::haveData($this->collected_rubbish_files)) {
+                    echo "Sending notification to admins ... ";
+                    $result = $this->sendGuardNotification();
+                    echo $result ? "\t -> SENT\n" : "\t -> ERR\n";
+                    echo "\nMalicious files have been detected!\n";
+                    echo "Malicious Directories: {$this->collected_rubbish_dir}\n";
+                    echo "Malicious Files: {$this->collected_rubbish_files}\n";
+                    echo "\n";
+                } else {
+                    echo "Yey! No malicious files have been detected.";
+                }
             }
 
         } else {
@@ -204,7 +218,23 @@ class ScanFilesCommand extends BaseCommand
     private function executionLockAndGuardMode(string $item) {
         if (is_file($item) && file_exists($item)) {
             $md5_hash = md5_file($item);
-            if (!$this->lock_vault->file_exists($item)) {
+            $item_data = $this->lock_vault->get_record($item);
+            if (ArrayUtilus::haveData($item_data)) {
+                if ($item_data['md5_hash'] === $md5_hash) {
+                    echo ($this->mode === Constants::EXECUTION_MODE_GUARD) ? "\t -> OK\n" : "\t -> DONE\n";
+                } else {
+                    if ($this->mode === Constants::EXECUTION_MODE_GUARD) {
+                        if ($this->action === Constants::GUARD_MODE_DELETE) {
+                            echo unlink($item) ? "\t -> DELETED" : " -> ERR DEL\n";
+                        } else {
+                            $this->collected_rubbish_files[] = $item;
+                            echo "\t -> TBD (To Be Deleted)";
+                        }
+                    } else {
+                        echo "\t -> OK\n";
+                    }
+                }
+            } else {
                 if ($this->mode === Constants::EXECUTION_MODE_GUARD) {
                     if ($this->action === Constants::GUARD_MODE_DELETE) {
                         echo unlink($item) ? "\t -> DELETED" : " -> ERR DEL\n";
@@ -217,8 +247,6 @@ class ScanFilesCommand extends BaseCommand
                     $result = $this->lock_vault->add_file($md5_hash, $item);
                     echo ($result) ? "\t -> LOCKED\n" : "\t -> ERR\n";
                 }
-            } else {
-                echo ($this->mode === Constants::EXECUTION_MODE_GUARD) ? "\t -> OK\n" : "\t -> DONE\n";
             }
         } else if (is_dir($item)) {
             echo "Locking folder: {$item} ";

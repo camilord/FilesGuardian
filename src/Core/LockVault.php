@@ -55,6 +55,17 @@ class LockVault extends BaseCore
     }
 
     /**
+     * @param string $file_path
+     * @return array|mixed
+     */
+    public function get_record(string $file_path) {
+        $q = "SELECT * FROM locked_files WHERE file_path = ? AND deleted IS NULL";
+        $stmt = $this->getDB()->prepare($q);
+        $stmt->execute([$file_path]);
+        return $stmt->fetch(\PDO::FETCH_ASSOC);
+    }
+
+    /**
      * @param string $dir_path
      * @return bool
      */
