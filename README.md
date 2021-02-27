@@ -1,5 +1,6 @@
 # FilesGuardian
-Files Guardian is command script to monitor your web server files when its change and notify you
+Files Guardian is command script to monitor your web server files when its changed or 
+any malicious files or folders added, will automatically delete it for you and notify you the list.
 
 ### Database Schema
 ```
