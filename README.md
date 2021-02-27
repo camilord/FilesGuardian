@@ -18,27 +18,50 @@ files_guardian.db
      +- created
      +- deleted  
 ```        
+## Configurations
+
+`dictionary/exclusoin.conf.json` - where the list of directory and files that you want to exclude from scanning, locking and guarding
+
+`dictionary/extensions.conf.json` - list of file extensions that you think it can be infected with malware, script kiddies etc
+
+`dictionary/known.rubbish` - known rubbish I experience and added as default dictionary. It is the contents of php scripts they infected.
+
+`admin.conf.json` - list of people to get the notification when malicious files/folders have found
+
+`mail.conf.json` - smtp credentials configuration
+
 
 ## Usage
 
+the command below is to scan the specified path
 ```bash
 php console.php --mode=scan /var/www/html
 ```
-the command above is to scan the specified path
 
+the command below is to lock down the specified path
 ```bash
 php console.php --mode=lock /var/www/html
 ```
-the command above is to lock down the specified path
 
+### Enable guarding your files
+the command below is to guard the specified folder,
+if there are foreign files and folders, it will be deleted automatically
+
+there are two options, aggressive and passive
+
+for aggressive mode, use:
 ```bash
-0 * * * * php /root/FilesGuardian/console.php --mode=guard /var/www/html
+0 * * * * php /root/FilesGuardian/console.php --mode=guard --action=delete /var/www/html
 ```
-the command above is to guard the folder specified,
-if there are foreign files, it will be deleted automatically
+
+for passive mode, use:
+```bash
+0 * * * * php /root/FilesGuardian/console.php --mode=guard --action=notify /var/www/html
+```
+
 
 ### Warning
 before setting up the cron, make sure you do the following:
 - run `--mode=lock` before running guard
-- exclude the folders that saves files or any folder or path that generates new files
+- exclude the folders that saves files or any folder or path that generates new files, add it to `dictionary/exclusion.conf.json`
 - folder exclusion should be relative path 

@@ -123,7 +123,6 @@ class ScanFilesCommand extends BaseCommand
                 $this->sendGuardNotification();
             }
 
-
         } else {
             throw new \Exception("Error! Please provide a valid path to scan.");
         }
@@ -350,11 +349,21 @@ class ScanFilesCommand extends BaseCommand
         return false;
     }
 
+    /**
+     * @return bool
+     */
     private function sendGuardNotification() {
         $mailer = new Mailer();
 
         $recipients = json_decode(file_get_contents(CONSOLE_ROOT.'/admin.conf.json'), true);
-        $subject = '';
-        //$result = $mailer->send();
+        $subject = 'ALERT! '.gethostname().' have detected malicious files! #'.date('Ymd');
+        $message = '<p>ATTENTION!</p>
+                    <br />
+                    <p>Malicious files and folders detected!</p>
+                    <p><strong>Files:</strong><br /><pre>'.print_r($this->collected_rubbish_files).'</pre></p>
+                    <p><strong>Folders:</strong><br /><pre>'.print_r($this->collected_rubbish_dir).'</pre></pre>
+                    <br />
+                    <p>-- FilesGuardian on '.gethostname().'</p>';
+        return $mailer->send($recipients, $subject, $message);
     }
 }
