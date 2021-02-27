@@ -352,5 +352,9 @@ class ScanFilesCommand extends BaseCommand
 
     private function sendGuardNotification() {
         $mailer = new Mailer();
+
+        $recipients = json_decode(file_get_contents(CONSOLE_ROOT.'/admin.conf.json'), true);
+        $subject = '';
+        //$result = $mailer->send();
     }
 }

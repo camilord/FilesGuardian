@@ -1,6 +1,7 @@
 .idea
 composer.lock
 dictionary/exclusion.conf.json
+admin.conf.json
 # Cache and logs (Symfony2)
 /app/cache/*
 /app/logs/*

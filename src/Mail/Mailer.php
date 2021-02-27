@@ -77,7 +77,11 @@ class Mailer
      * @param array|null $attachments
      * @return bool
      */
-    public function send(array $recipients, string $subject, string $message, ?array $cc = null, ?array $bcc = null, ?array $attachments = null) {
+    public function send(
+        array $recipients, string $subject, string $message,
+        ?array $cc = null, ?array $bcc = null,
+        ?array $attachments = null
+    ) {
         //Instantiation and passing `true` enables exceptions
         $mail = new PHPMailer(true);
 
