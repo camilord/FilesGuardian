@@ -20,6 +20,7 @@ use App\Config\ExclusionConfig;
 use App\Config\ExtConfig;
 use App\Console\BaseCommand;
 use App\Core\LockVault;
+use App\Mail\Mailer;
 use App\Misc\RubbishDefaultDictionary;
 use camilord\utilus\Data\ArrayUtilus;
 use camilord\utilus\IO\SystemUtilus;
@@ -40,6 +41,7 @@ class ScanFilesCommand extends BaseCommand
 
     private $mode;
     private $path;
+    private $action;
 
     private $default_dictionaries = [];
 
@@ -54,6 +56,7 @@ class ScanFilesCommand extends BaseCommand
      * @var array
      */
     private $collected_rubbish_files = [];
+    private $collected_rubbish_dir = [];
 
     /**
      * configure command
@@ -116,7 +119,10 @@ class ScanFilesCommand extends BaseCommand
 
             if ($this->mode === Constants::EXECUTION_MODE_SCAN) {
                 $this->executionScanMode();
+            } else if ($this->mode === Constants::EXECUTION_MODE_GUARD) {
+                $this->sendGuardNotification();
             }
+
 
         } else {
             throw new \Exception("Error! Please provide a valid path to scan.");
@@ -156,11 +162,15 @@ class ScanFilesCommand extends BaseCommand
             if (is_dir($filename) && !in_array($filename, $this->exclusion_dir)) {
                 echo ":\n\n";
                 echo "\t == Scanning Sub-dir ==\n\n";
+                $result = true;
                 if ($this->mode === Constants::EXECUTION_MODE_LOCK || $this->mode === Constants::EXECUTION_MODE_GUARD) {
-                    $this->executionLockAndGuardMode($filename);
+                    $result = $this->executionLockAndGuardMode($filename);
                 }
+
                 // scan sub-folders
-                $this->scan_files($filename);
+                if ($result) {
+                    $this->scan_files($filename);
+                }
             } else if (
                 is_file($filename) &&
                 !in_array($filename, $this->exclusion_files) &&
@@ -190,34 +200,71 @@ class ScanFilesCommand extends BaseCommand
 
     /**
      * @param string $item
+     * @return bool - whether you can recurse or not
      */
     private function executionLockAndGuardMode(string $item) {
         if (is_file($item) && file_exists($item)) {
             $md5_hash = md5_file($item);
             if (!$this->lock_vault->file_exists($item)) {
                 if ($this->mode === Constants::EXECUTION_MODE_GUARD) {
-                    unlink();
+                    if ($this->action === Constants::GUARD_MODE_DELETE) {
+                        echo unlink($item) ? "\t -> DELETED" : " -> ERR DEL\n";
+                    } else {
+                        $this->collected_rubbish_files[] = $item;
+                        echo "\t -> TBD (To Be Deleted)";
+                    }
+                    return false;
                 } else {
                     $result = $this->lock_vault->add_file($md5_hash, $item);
                     echo ($result) ? "\t -> LOCKED\n" : "\t -> ERR\n";
                 }
             } else {
-                echo "\t -> DONE\n";
+                echo ($this->mode === Constants::EXECUTION_MODE_GUARD) ? "\t -> OK\n" : "\t -> DONE\n";
             }
         } else if (is_dir($item)) {
             echo "Locking folder: {$item} ";
             if (!$this->lock_vault->dir_exists($item)) {
                 if ($this->mode === Constants::EXECUTION_MODE_GUARD) {
-
+                    if ($this->action === Constants::GUARD_MODE_DELETE) {
+                        $this->remove_dir($item);
+                    } else {
+                        $this->collected_rubbish_dir[] = $item;
+                    }
+                    echo "\t -> DIR DELETED\n";
+                    return false;
                 } else {
                     $result = $this->lock_vault->add_dir($item);
                     echo ($result) ? "\t -> LOCKED\n" : "\t -> ERR\n";
                 }
             } else {
-                echo "\t -> DONE\n";
+                echo ($this->mode === Constants::EXECUTION_MODE_GUARD) ? "\t -> OK\n" : "\t -> DONE\n";
             }
         } else {
             echo "\t -> OK?\n";
+        }
+
+        return true;
+    }
+
+    /**
+     * @param string $dir
+     */
+    private function remove_dir(string $dir)
+    {
+        if (is_dir($dir))
+        {
+            $objects = scandir($dir);
+            foreach ($objects as $object)
+            {
+                if ($object != "." && $object != "..")
+                {
+                    if (is_dir($dir. DIRECTORY_SEPARATOR .$object) && !is_link($dir."/".$object))
+                        $this->remove_dir($dir. DIRECTORY_SEPARATOR .$object);
+                    else
+                        unlink($dir. DIRECTORY_SEPARATOR .$object);
+                }
+            }
+            rmdir($dir);
         }
     }
 
@@ -303,4 +350,7 @@ class ScanFilesCommand extends BaseCommand
         return false;
     }
 
+    private function sendGuardNotification() {
+        $mailer = new Mailer();
+    }
 }
