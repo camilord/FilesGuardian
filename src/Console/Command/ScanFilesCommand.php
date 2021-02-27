@@ -130,8 +130,8 @@ class ScanFilesCommand extends BaseCommand
                     $result = $this->sendGuardNotification();
                     echo $result ? "\t -> SENT\n" : "\t -> ERR\n";
                     echo "\nMalicious files have been detected!\n";
-                    echo "Malicious Directories: {$this->collected_rubbish_dir}\n";
-                    echo "Malicious Files: {$this->collected_rubbish_files}\n";
+                    echo "Malicious Directories: ".print_r($this->collected_rubbish_dir, true)."\n";
+                    echo "Malicious Files: ".print_r($this->collected_rubbish_files, true)."\n";
                     echo "\n\n";
                 } else {
                     echo "Yey! No malicious files have been detected.\n\n\n";
