@@ -35,7 +35,7 @@ class ExclusionConfig
     public function __construct()
     {
         $conf_filename = SystemUtilus::cleanPath(
-            CONSOLE_ROOT.'/dictionary/extensions.conf.json'
+            CONSOLE_ROOT.'/dictionary/exclusion.conf.json'
         );
         $this->data = json_decode(
             file_get_contents(
