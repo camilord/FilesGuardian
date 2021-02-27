@@ -65,6 +65,7 @@ meaning, if any malicious files/folders found, will notify you (reminder to conf
 
 ### Warning
 before setting up the cron, make sure you do the following:
-- run `--mode=lock` before running guard
+- run `--mode=lock` before running `--mode=guard`
 - exclude the folders that saves files or any folder or path that generates new files, add it to `dictionary/exclusion.conf.json`
-- folder exclusion should be relative path 
+- folder exclusion should be full path
+- on aggreesive mode (`--acton=delete`), a reminder that it will delete the files automatically.  
